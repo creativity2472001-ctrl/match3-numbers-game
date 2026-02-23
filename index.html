@@ -2,7 +2,8 @@
 <html dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لعبة التطابق الثلاثي - العملات المعدنية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة التطابق الثلاثي - النسخة الذهبية</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,238 +12,491 @@
             padding: 0;
             user-select: none;
         }
+
         body {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            padding: 15px;
+            background: radial-gradient(circle at 50% 50%, #1a1a2e, #0f0f1a);
+            padding: 20px;
         }
+
         .game-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 40px;
-            padding: 25px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            max-width: 700px;
-            width: 100%;
-        }
-        .level-badge {
-            text-align: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 12px 25px;
+            background: linear-gradient(145deg, #2a2a4a, #1a1a3a);
             border-radius: 60px;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
+            padding: 30px;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.1);
+            max-width: 800px;
+            width: 100%;
+            border: 3px solid gold;
         }
-        .stats {
+
+        /* الهيدر مع النجوم */
+        .header {
             display: flex;
-            justify-content: space-around;
-            background: #f0f0f0;
-            padding: 15px;
-            border-radius: 20px;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
-        .stat-item {
-            text-align: center;
+
+        .level-box {
+            background: linear-gradient(145deg, #4a2a6a, #2a1a4a);
+            padding: 10px 25px;
+            border-radius: 40px;
+            border: 2px solid gold;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
-        .stat-value {
+
+        .level-text {
+            color: gold;
             font-size: 28px;
             font-weight: bold;
-            color: #764ba2;
+            text-shadow: 0 0 10px #ffaa00;
         }
+
+        .stars-box {
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 30px;
+        }
+
+        .star {
+            font-size: 35px;
+            color: #444;
+            transition: 0.3s;
+            filter: drop-shadow(0 0 5px gold);
+        }
+
+        .star.active {
+            color: gold;
+            text-shadow: 0 0 20px orange;
+        }
+
+        /* الإحصائيات */
+        .stats-panel {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0,0,0,0.6);
+            padding: 20px;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            border: 2px solid #4a2a6a;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 40px;
+            font-weight: bold;
+            color: gold;
+            text-shadow: 0 0 15px orange;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 16px;
+        }
+
+        /* المعززات */
         .boosters-panel {
             display: flex;
             justify-content: center;
             gap: 30px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 30px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
+
         .booster {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 20px;
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle at 30% 30%, #ffd966, #b8860b);
+            border-radius: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 3px solid gold;
+            box-shadow: 0 10px 0 #8b6508, 0 15px 20px black;
             cursor: pointer;
-            border: 3px solid transparent;
+            transition: 0.1s;
         }
-        .booster.active {
-            border-color: gold;
-            background: #fff9e6;
+
+        .booster:active {
+            transform: translateY(5px);
+            box-shadow: 0 5px 0 #8b6508, 0 10px 15px black;
         }
+
+        .booster.disabled {
+            opacity: 0.5;
+            filter: grayscale(1);
+            pointer-events: none;
+        }
+
         .booster-icon {
-            font-size: 32px;
+            font-size: 40px;
         }
-        .board-container {
-            display: flex;
-            justify-content: center;
-            background: #f0f0f0;
-            padding: 25px;
-            border-radius: 40px;
+
+        .booster-count {
+            background: #2a1a4a;
+            color: gold;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: bold;
         }
+
+        /* لوحة اللعب */
+        .board-wrapper {
+            background: #2a1a4a;
+            padding: 30px;
+            border-radius: 70px;
+            border: 4px solid gold;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+            margin-bottom: 25px;
+        }
+
         .board {
             display: inline-grid;
-            gap: 10px;
+            gap: 8px;
+            justify-content: center;
+            width: 100%;
         }
-        /* تصميم العملة المعدنية */
+
+        /* الخلايا - تصميم ثلاثي الأبعاد */
         .cell {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffd966, #b8860b);
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
-            color: #333;
-            text-shadow: 0 2px 4px rgba(255,255,255,0.5);
-            box-shadow: 0 8px 0 #8b6508, 0 10px 15px rgba(0,0,0,0.3);
-            cursor: pointer;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 0 rgba(0,0,0,0.3), 0 12px 20px rgba(0,0,0,0.4);
+            cursor: grab;
             transition: 0.1s;
-            border: 2px solid #f1c40f;
             position: relative;
+            border: 2px solid rgba(255,255,255,0.3);
         }
-        .cell.selected {
-            transform: scale(1.1);
-            box-shadow: 0 0 0 4px gold, 0 10px 0 #8b6508, 0 15px 20px black;
+
+        .cell:active {
+            cursor: grabbing;
+            transform: scale(0.95);
         }
+
+        /* ألوان الأرقام */
+        .num-1 { background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000); }  /* أحمر */
+        .num-2 { background: radial-gradient(circle at 30% 30%, #4dff4d, #00b300); }  /* أخضر */
+        .num-3 { background: radial-gradient(circle at 30% 30%, #4d4dff, #0000b3); }  /* أزرق */
+        .num-4 { background: radial-gradient(circle at 30% 30%, #ff4dff, #b300b3); }  /* وردي */
+        .num-5 { background: radial-gradient(circle at 30% 30%, #ffff4d, #b3b300); }  /* أصفر */
+        .num-6 { background: radial-gradient(circle at 30% 30%, #ffaa4d, #b35f00); }  /* برتقالي */
+
         .cell.obstacle {
-            background: radial-gradient(circle at 30% 30%, #95a5a6, #4a4a4a);
-            box-shadow: 0 8px 0 #2c3e50;
-            border-color: #7f8c8d;
+            background: radial-gradient(circle at 30% 30%, #7f8c8d, #2c3e50);
+            cursor: not-allowed;
+            box-shadow: 0 5px 0 #1a1a1a;
         }
+
         .cell.obstacle::after {
             content: "⛔";
-            font-size: 28px;
-            color: white;
+            font-size: 35px;
+            opacity: 0.7;
         }
+
         .cell.ice {
             position: relative;
         }
+
         .cell.ice::after {
             content: "❄️";
             position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 22px;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+            top: -12px;
+            right: -12px;
+            font-size: 28px;
+            filter: drop-shadow(0 0 5px cyan);
         }
-        .cell.hint {
-            animation: hintPulse 1s infinite;
-            box-shadow: 0 0 0 4px #00ff88, 0 10px 0 #8b6508, 0 15px 20px black;
+
+        .cell.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 6px gold, 0 8px 0 rgba(0,0,0,0.3), 0 15px 25px black;
+            z-index: 100;
         }
-        @keyframes hintPulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
+
+        @keyframes matchPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); filter: brightness(1.5); }
+            100% { transform: scale(0); }
         }
-        .controls {
+
+        .cell.matching {
+            animation: matchPop 0.3s ease forwards;
+        }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        .cell.error {
+            animation: shake 0.2s;
+        }
+
+        /* المساعدة */
+        .hint-button {
+            background: linear-gradient(145deg, #4a2a6a, #2a1a4a);
+            border: 3px solid gold;
+            color: gold;
+            font-size: 24px;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
             display: flex;
+            align-items: center;
             justify-content: center;
             gap: 15px;
-            margin-top: 25px;
+            margin: 0 auto 25px;
+            width: fit-content;
+            transition: 0.1s;
+            box-shadow: 0 10px 0 #1a0f2a;
         }
-        button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 60px;
-            font-size: 18px;
-            cursor: pointer;
+
+        .hint-button:active {
+            transform: translateY(5px);
+            box-shadow: 0 5px 0 #1a0f2a;
         }
-        .reward-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #f5af19;
-            color: white;
+
+        .hint-button.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .hint-icon {
+            background: gold;
+            color: #2a1a4a;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .cell.hint {
+            animation: hintGlow 1s infinite;
+            box-shadow: 0 0 0 6px cyan, 0 8px 0 rgba(0,0,0,0.3), 0 15px 25px black;
+        }
+
+        @keyframes hintGlow {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+        }
+
+        /* أزرار التحكم */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(145deg, #4a2a6a, #2a1a4a);
+            border: 3px solid gold;
+            color: gold;
+            font-size: 28px;
             padding: 15px 30px;
             border-radius: 60px;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 10px 0 #1a0f2a;
+            flex: 1;
+            max-width: 200px;
+            text-align: center;
+        }
+
+        .nav-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 5px 0 #1a0f2a;
+        }
+
+        .nav-btn.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* رسائل */
+        .floating-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(145deg, gold, orange);
+            color: #2a1a4a;
+            padding: 30px 60px;
+            border-radius: 80px;
+            font-size: 48px;
+            font-weight: bold;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
             display: none;
             z-index: 1000;
+            animation: floatIn 0.5s;
+            border: 5px solid white;
+        }
+
+        @keyframes floatIn {
+            0% { transform: translate(-50%, -30%); opacity: 0; }
+            100% { transform: translate(-50%, -50%); opacity: 1; }
+        }
+
+        .score-pop {
+            position: absolute;
+            color: gold;
+            font-size: 30px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: popUp 1s forwards;
+        }
+
+        @keyframes popUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <div class="level-badge" id="levelNumber">المستوى 1 / 20</div>
-        <div class="stats">
-            <div class="stat-item"><span class="stat-value" id="score">0</span><div>النقاط</div></div>
-            <div class="stat-item"><span class="stat-value" id="target">500</span><div>الهدف</div></div>
+        <!-- الهيدر مع النجوم -->
+        <div class="header">
+            <div class="level-box">
+                <span class="level-text" id="levelDisplay">المستوى 1</span>
+            </div>
+            <div class="stars-box" id="starsContainer">
+                <span class="star" id="star1">★</span>
+                <span class="star" id="star2">★</span>
+                <span class="star" id="star3">★</span>
+            </div>
         </div>
+
+        <!-- الإحصائيات -->
+        <div class="stats-panel">
+            <div class="stat">
+                <div class="stat-value" id="scoreDisplay">0</div>
+                <div class="stat-label">النقاط</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="targetDisplay">500</div>
+                <div class="stat-label">الهدف</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="movesDisplay">0</div>
+                <div class="stat-label">الحركات</div>
+            </div>
+        </div>
+
+        <!-- المعززات -->
         <div class="boosters-panel">
-            <div class="booster" onclick="selectBooster('arrow')" id="boosterArrow">
+            <div class="booster" onclick="useBooster('arrow')" id="boosterArrow">
                 <div class="booster-icon">⬅️➡️</div>
-                <div id="arrowCount">0</div>
+                <div class="booster-count" id="arrowCount">0</div>
             </div>
-            <div class="booster" onclick="selectBooster('bomb')" id="boosterBomb">
+            <div class="booster" onclick="useBooster('bomb')" id="boosterBomb">
                 <div class="booster-icon">💣</div>
-                <div id="bombCount">0</div>
+                <div class="booster-count" id="bombCount">0</div>
             </div>
         </div>
-        <div class="board-container">
+
+        <!-- زر المساعدة -->
+        <div class="hint-button" onclick="useHint()" id="hintBtn">
+            <span class="hint-icon">💡</span>
+            <span>مساعدة (50 نقطة)</span>
+            <span id="hintCost">50</span>
+        </div>
+
+        <!-- لوحة اللعب -->
+        <div class="board-wrapper">
             <div class="board" id="board"></div>
         </div>
-        <div class="controls">
-            <button onclick="prevLevel()">◀ سابق</button>
-            <button onclick="resetLevel()">إعادة</button>
-            <button onclick="nextLevel()">التالي ▶</button>
+
+        <!-- أزرار التنقل -->
+        <div class="nav-buttons">
+            <div class="nav-btn" onclick="prevLevel()" id="prevBtn">◀ رجوع</div>
+            <div class="nav-btn" onclick="resetLevel()">🔄 إعادة</div>
+            <div class="nav-btn" onclick="nextLevel()" id="nextBtn">تالي ▶</div>
         </div>
     </div>
-    <div class="reward-message" id="rewardMessage"></div>
+
+    <!-- رسالة منبثقة -->
+    <div class="floating-message" id="messageBox"></div>
 
     <script>
-        // ---------- إعدادات المراحل ----------
+        // ------------------------------------------------------------
+        //                     إعدادات اللعبة المتطورة
+        // ------------------------------------------------------------
+
+        // النجوم والمستويات المحلولة
+        let completedLevels = JSON.parse(localStorage.getItem('completedLevels')) || [];
+        let levelStars = JSON.parse(localStorage.getItem('levelStars')) || {};
+
+        // متغيرات اللعبة
+        let currentLevel = 0;
+        let board = [];
+        let score = 0;
+        let moves = 0;
+        let selectedRow = -1, selectedCol = -1;
+        let boosters = { arrow: 0, bomb: 0 };
+        let gameActive = true;
+        let hintActive = false;
+        let numbersPool = [];
+
+        // ------------------------------------------------------------
+        //                     توليد 20 مرحلة متكاملة
+        // ------------------------------------------------------------
         function generateLevels() {
             let levels = [];
             for (let i = 1; i <= 20; i++) {
-                let cycle = Math.floor((i-1) / 5);
-                let pos = (i-1) % 5; // 0,1,2,3,4
-                let uniqueNumbers, obstacleCount, iceCount, arrowRate, bombRate;
-
+                let uniqueNumbers, obstacleCount, iceCount, target;
+                
                 if (i <= 3) {
-                    uniqueNumbers = 3; // أرقام 1-3
+                    uniqueNumbers = 3;  // أرقام 1-3
                     obstacleCount = 0;
                     iceCount = 0;
-                    arrowRate = 0.7;  // 70% فرصة
-                    bombRate = 0.5;
+                    target = 300 + i * 50;
                 } else if (i <= 5) {
-                    uniqueNumbers = 4; // أرقام 1-4
-                    obstacleCount = 2 + cycle;
+                    uniqueNumbers = 4;  // أرقام 1-4
+                    obstacleCount = 2 + i;
                     iceCount = 1;
-                    arrowRate = 0.3;
-                    bombRate = 0.2;
+                    target = 500 + i * 60;
+                } else if (i <= 10) {
+                    uniqueNumbers = 5;  // أرقام 1-5
+                    obstacleCount = 4 + i;
+                    iceCount = 2;
+                    target = 800 + i * 70;
                 } else {
-                    uniqueNumbers = 6; // أرقام 1-6
-                    obstacleCount = 4 + cycle * 2;
-                    iceCount = 2 + cycle;
-                    arrowRate = 0.1;
-                    bombRate = 0.05;
+                    uniqueNumbers = 6;  // أرقام 1-6
+                    obstacleCount = 6 + i;
+                    iceCount = 3;
+                    target = 1200 + i * 80;
                 }
 
                 levels.push({
                     id: i,
-                    name: `مرحلة ${i}`,
-                    rows: (pos === 4 || i > 15) ? 7 : 6,
-                    cols: (pos === 4 || i > 15) ? 7 : 6,
-                    target: 400 + i * 50,
+                    rows: i > 15 ? 7 : 6,
+                    cols: i > 15 ? 7 : 6,
+                    target: target,
                     uniqueNumbers: uniqueNumbers,
-                    obstacles: obstacleCount > 0 ? generateObstacles(obstacleCount, (pos===4||i>15)?7:6, (pos===4||i>15)?7:6) : [],
-                    ice: iceCount > 0 ? generateIce(iceCount, (pos===4||i>15)?7:6, (pos===4||i>15)?7:6) : [],
-                    arrowRate: arrowRate,
-                    bombRate: bombRate,
-                    shape: (pos === 4 && i > 10) ? 'triangle' : 'square'
+                    obstacles: generateObstacles(obstacleCount, i > 15 ? 7 : 6, i > 15 ? 7 : 6),
+                    ice: generateIce(iceCount, i > 15 ? 7 : 6, i > 15 ? 7 : 6),
+                    arrowRate: i <= 3 ? 0.8 : i <= 5 ? 0.4 : 0.2,
+                    bombRate: i <= 3 ? 0.6 : i <= 5 ? 0.3 : 0.1,
+                    shape: i > 12 ? 'triangle' : 'square'
                 });
             }
             return levels;
@@ -255,6 +509,7 @@
             }
             return obs;
         }
+
         function generateIce(count, rows, cols) {
             let ice = [];
             for (let i = 0; i < count; i++) {
@@ -264,20 +519,14 @@
         }
 
         const levels = generateLevels();
-        let currentLevel = 0;
-        let board = [];
-        let score = 0;
-        let selectedRow = -1, selectedCol = -1;
-        let boosters = { arrow: 0, bomb: 0 };
-        let selectedBooster = null;
-        let hintTimer = null;
-        let numbersPool = [];
 
+        // تحديث مجموعة الأرقام حسب المرحلة
         function updateNumbersPool(level) {
             numbersPool = [];
             for (let i = 1; i <= level.uniqueNumbers; i++) numbersPool.push(i);
         }
 
+        // إنشاء لوحة عشوائية
         function createRandomBoard(rows, cols) {
             let b = [];
             for (let r = 0; r < rows; r++) {
@@ -290,9 +539,148 @@
             return b;
         }
 
-        // ---------- أحداث السحب (Drag & Drop) ----------
+        // ------------------------------------------------------------
+        //                     نظام النجوم
+        // ------------------------------------------------------------
+        function updateStars() {
+            let stars = levelStars[currentLevel] || 0;
+            for (let i = 1; i <= 3; i++) {
+                let star = document.getElementById(`star${i}`);
+                if (i <= stars) star.classList.add('active');
+                else star.classList.remove('active');
+            }
+        }
+
+        function calculateStars() {
+            let level = levels[currentLevel];
+            let percent = (score / level.target) * 100;
+            let stars = 0;
+            if (percent >= 100) stars = 1;
+            if (percent >= 150) stars = 2;
+            if (percent >= 200) stars = 3;
+            
+            if (stars > 0 && !completedLevels.includes(currentLevel)) {
+                completedLevels.push(currentLevel);
+                levelStars[currentLevel] = stars;
+                localStorage.setItem('completedLevels', JSON.stringify(completedLevels));
+                localStorage.setItem('levelStars', JSON.stringify(levelStars));
+                showMessage(`🌟 فزت بـ ${stars} نجوم!`);
+            }
+            updateStars();
+        }
+
+        // ------------------------------------------------------------
+        //                     التحقق من التطابقات
+        // ------------------------------------------------------------
+        function checkMatches(board) {
+            let matches = [], lengths = [];
+            let rows = board.length, cols = board[0].length;
+
+            // أفقي
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols - 2; c++) {
+                    if (board[r][c] && board[r][c+1] && board[r][c+2] && 
+                        board[r][c] === board[r][c+1] && board[r][c] === board[r][c+2]) {
+                        
+                        let len = 3;
+                        if (c+3 < cols && board[r][c] === board[r][c+3]) {
+                            len = 4;
+                            if (c+4 < cols && board[r][c] === board[r][c+4]) len = 5;
+                        }
+                        
+                        for (let i = 0; i < len; i++) {
+                            matches.push([r, c+i]);
+                            lengths.push({ row: r, col: c+i, length: len });
+                        }
+                    }
+                }
+            }
+
+            // عمودي
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows - 2; r++) {
+                    if (board[r][c] && board[r+1][c] && board[r+2][c] && 
+                        board[r][c] === board[r+1][c] && board[r][c] === board[r+2][c]) {
+                        
+                        let len = 3;
+                        if (r+3 < rows && board[r][c] === board[r+3][c]) {
+                            len = 4;
+                            if (r+4 < rows && board[r][c] === board[r+4][c]) len = 5;
+                        }
+                        
+                        for (let i = 0; i < len; i++) {
+                            matches.push([r+i, c]);
+                            lengths.push({ row: r+i, col: c, length: len });
+                        }
+                    }
+                }
+            }
+
+            // إزالة التكرارات
+            matches = [...new Set(matches.map(JSON.stringify))].map(JSON.parse);
+            return { matches, matchLengths: lengths };
+        }
+
+        // ------------------------------------------------------------
+        //                     إزالة التطابقات وإضافة معززات
+        // ------------------------------------------------------------
+        function removeMatches(board, matches, matchLengths) {
+            let level = levels[currentLevel];
+            let rows = board.length, cols = board[0].length;
+            let removed = Array(rows).fill().map(() => Array(cols).fill(false));
+
+            matches.forEach(([r, c]) => {
+                removed[r][c] = true;
+                let info = matchLengths.find(m => m.row === r && m.col === c);
+                if (info) {
+                    if (info.length === 4 && Math.random() < level.arrowRate) {
+                        boosters.arrow++;
+                        animateBooster('arrow');
+                    } else if (info.length === 5 && Math.random() < level.bombRate) {
+                        boosters.bomb++;
+                        animateBooster('bomb');
+                    }
+                }
+            });
+
+            // إضافة نقاط مع تأثير بصري
+            let points = matches.length * 10;
+            score += points;
+            showScorePop(points);
+
+            // إسقاط الأرقام الجديدة
+            for (let c = 0; c < cols; c++) {
+                for (let r = rows-1; r >= 0; r--) {
+                    if (removed[r][c]) {
+                        for (let k = r-1; k >= 0; k--) {
+                            if (!removed[k][c]) {
+                                board[r][c] = board[k][c];
+                                removed[k][c] = true;
+                                removed[r][c] = false;
+                                break;
+                            }
+                        }
+                        if (removed[r][c]) {
+                            board[r][c] = numbersPool[Math.floor(Math.random() * numbersPool.length)];
+                        }
+                    }
+                }
+            }
+
+            // التحقق من الفوز
+            if (score >= level.target) {
+                calculateStars();
+            }
+        }
+
+        // ------------------------------------------------------------
+        //                     معالجة السحب والإفلات
+        // ------------------------------------------------------------
         function handleDragStart(r, c) {
             if (!gameActive) return;
+            let level = levels[currentLevel];
+            if (level.obstacles.some(o => o.row === r && o.col === c)) return;
+            
             selectedRow = r;
             selectedCol = c;
             renderBoard();
@@ -305,209 +693,261 @@
         function handleDrop(r, c) {
             e.preventDefault();
             if (!gameActive || selectedRow === -1) return;
+
+            let level = levels[currentLevel];
+            if (level.obstacles.some(o => o.row === r && o.col === c)) {
+                selectedRow = -1;
+                renderBoard();
+                return;
+            }
+
+            // التحقق من التجاور
             if (Math.abs(r - selectedRow) + Math.abs(c - selectedCol) !== 1) {
                 selectedRow = -1;
                 renderBoard();
                 return;
             }
-            // تبديل
+
+            // تبديل الخليتين
             let temp = board[r][c];
             board[r][c] = board[selectedRow][selectedCol];
             board[selectedRow][selectedCol] = temp;
-            processBoard();
-            selectedRow = -1;
-            renderBoard();
-        }
 
-        function processBoard() {
+            moves++;
+
+            // التحقق من وجود تطابقات
             let { matches, matchLengths } = checkMatches(board);
+            
             if (matches.length > 0) {
                 removeMatches(board, matches, matchLengths);
+                
+                // استمرار إزالة التطابقات المتسلسلة
                 let more;
                 do {
                     let res = checkMatches(board);
                     more = res.matches;
-                    if (more.length) removeMatches(board, more, res.matchLengths);
+                    if (more.length) {
+                        removeMatches(board, more, res.matchLengths);
+                    }
                 } while (more.length);
+            } else {
+                // إعادة التبديل إذا لم يوجد تطابق
+                let temp = board[r][c];
+                board[r][c] = board[selectedRow][selectedCol];
+                board[selectedRow][selectedCol] = temp;
+                moves--;
+                
+                // تأثير خطأ
+                let cells = document.querySelectorAll('.cell');
+                cells.forEach(c => c.classList.add('error'));
+                setTimeout(() => cells.forEach(c => c.classList.remove('error')), 200);
             }
+
+            selectedRow = -1;
             renderBoard();
         }
 
-        function checkMatches(board) {
-            let matches = [], lengths = [];
-            let rows = board.length, cols = board[0].length;
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols - 2; c++) {
-                    if (board[r][c] && board[r][c+1] && board[r][c+2] && board[r][c] === board[r][c+1] && board[r][c] === board[r][c+2]) {
-                        let len = 3;
-                        if (c+3 < cols && board[r][c] === board[r][c+3]) len = 4;
-                        if (c+4 < cols && board[r][c] === board[r][c+4]) len = 5;
-                        for (let i = 0; i < len; i++) {
-                            matches.push([r, c+i]);
-                            lengths.push({ row: r, col: c+i, length: len });
-                        }
-                    }
-                }
+        // ------------------------------------------------------------
+        //                     المساعدة
+        // ------------------------------------------------------------
+        function useHint() {
+            if (score < 50) {
+                showMessage('❌ النقاط غير كافية!');
+                return;
             }
-            for (let c = 0; c < cols; c++) {
-                for (let r = 0; r < rows - 2; r++) {
-                    if (board[r][c] && board[r+1][c] && board[r+2][c] && board[r][c] === board[r+1][c] && board[r][c] === board[r+2][c]) {
-                        let len = 3;
-                        if (r+3 < rows && board[r][c] === board[r+3][c]) len = 4;
-                        if (r+4 < rows && board[r][c] === board[r+4][c]) len = 5;
-                        for (let i = 0; i < len; i++) {
-                            matches.push([r+i, c]);
-                            lengths.push({ row: r+i, col: c, length: len });
-                        }
-                    }
-                }
-            }
-            return { matches: [...new Set(matches.map(JSON.stringify))].map(JSON.parse), matchLengths: lengths };
-        }
 
-        function removeMatches(board, matches, matchLengths) {
-            let level = levels[currentLevel];
-            let rows = board.length, cols = board[0].length;
-            let removed = Array(rows).fill().map(() => Array(cols).fill(false));
-            matches.forEach(([r, c]) => {
-                removed[r][c] = true;
-                let info = matchLengths.find(m => m.row === r && m.col === c);
-                if (info) {
-                    if (info.length === 4 && Math.random() < level.arrowRate) {
-                        boosters.arrow++;
-                        showMsg('🎯 سهم');
-                    } else if (info.length === 5 && Math.random() < level.bombRate) {
-                        boosters.bomb++;
-                        showMsg('💣 قنبلة');
-                    }
-                }
-            });
-            score += matches.length * 10;
-
-            for (let c = 0; c < cols; c++) {
-                for (let r = rows-1; r >= 0; r--) {
-                    if (removed[r][c]) {
-                        for (let k = r-1; k >= 0; k--) {
-                            if (!removed[k][c]) {
-                                board[r][c] = board[k][c];
-                                removed[k][c] = true;
-                                removed[r][c] = false;
-                                break;
-                            }
-                        }
-                        if (removed[r][c]) board[r][c] = numbersPool[Math.floor(Math.random() * numbersPool.length)];
-                    }
-                }
-            }
-            if (score >= level.target) setTimeout(() => alert('🎉 فزت!'), 200);
-        }
-
-        // مساعدة بعد 10 ثواني
-        function startHintTimer() {
-            if (hintTimer) clearTimeout(hintTimer);
-            hintTimer = setTimeout(() => {
-                // إيجاد أول زوج قابل للتبديل يؤدي إلى تطابق
-                for (let r = 0; r < board.length; r++) {
-                    for (let c = 0; c < board[0].length; c++) {
-                        if (c+1 < board[0].length) {
+            // البحث عن زوج يعطي تطابق
+            for (let r = 0; r < board.length; r++) {
+                for (let c = 0; c < board[0].length; c++) {
+                    // جرب التبديل الأفقي
+                    if (c + 1 < board[0].length) {
+                        [board[r][c], board[r][c+1]] = [board[r][c+1], board[r][c]];
+                        if (checkMatches(board).matches.length > 0) {
                             [board[r][c], board[r][c+1]] = [board[r][c+1], board[r][c]];
-                            if (checkMatches(board).matches.length > 0) {
-                                [board[r][c], board[r][c+1]] = [board[r][c+1], board[r][c]];
-                                highlightHint(r, c);
-                                return;
-                            }
-                            [board[r][c], board[r][c+1]] = [board[r][c+1], board[r][c]];
+                            highlightCell(r, c);
+                            score -= 50;
+                            renderBoard();
+                            return;
                         }
-                        if (r+1 < board.length) {
+                        [board[r][c], board[r][c+1]] = [board[r][c+1], board[r][c]];
+                    }
+                    
+                    // جرب التبديل العمودي
+                    if (r + 1 < board.length) {
+                        [board[r][c], board[r+1][c]] = [board[r+1][c], board[r][c]];
+                        if (checkMatches(board).matches.length > 0) {
                             [board[r][c], board[r+1][c]] = [board[r+1][c], board[r][c]];
-                            if (checkMatches(board).matches.length > 0) {
-                                [board[r][c], board[r+1][c]] = [board[r+1][c], board[r][c]];
-                                highlightHint(r, c);
-                                return;
-                            }
-                            [board[r][c], board[r+1][c]] = [board[r+1][c], board[r][c]];
+                            highlightCell(r, c);
+                            score -= 50;
+                            renderBoard();
+                            return;
                         }
+                        [board[r][c], board[r+1][c]] = [board[r+1][c], board[r][c]];
                     }
                 }
-            }, 10000);
+            }
+            
+            showMessage('❌ لا توجد حركة متاحة!');
         }
 
-        function highlightHint(r, c) {
-            document.querySelectorAll('.cell').forEach(el => el.classList.remove('hint'));
-            let idx = r * board[0].length + c;
-            document.querySelectorAll('.cell')[idx]?.classList.add('hint');
+        function highlightCell(r, c) {
+            let index = r * board[0].length + c;
+            document.querySelectorAll('.cell')[index]?.classList.add('hint');
+            setTimeout(() => {
+                document.querySelectorAll('.cell').forEach(el => el.classList.remove('hint'));
+            }, 2000);
         }
 
-        function showMsg(t) {
-            let m = document.getElementById('rewardMessage');
-            m.textContent = t;
-            m.style.display = 'block';
-            setTimeout(() => m.style.display = 'none', 1500);
+        // ------------------------------------------------------------
+        //                     المعززات
+        // ------------------------------------------------------------
+        function useBooster(type) {
+            if (boosters[type] <= 0) return;
+
+            if (type === 'arrow') {
+                showMessage('⬅️➡️ اختر صف أو عمود');
+                // هنا منطق اختيار الصف/العمود
+            } else if (type === 'bomb') {
+                showMessage('💣 اختر خلية للقنبلة');
+                // هنا منطق القنبلة
+            }
         }
 
+        function animateBooster(type) {
+            let el = document.getElementById(`booster${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            el.style.transform = 'scale(1.3)';
+            setTimeout(() => el.style.transform = 'scale(1)', 200);
+        }
+
+        // ------------------------------------------------------------
+        //                     عرض الرسائل
+        // ------------------------------------------------------------
+        function showMessage(text) {
+            let msg = document.getElementById('messageBox');
+            msg.style.display = 'block';
+            msg.textContent = text;
+            setTimeout(() => msg.style.display = 'none', 2000);
+        }
+
+        function showScorePop(points) {
+            let pop = document.createElement('div');
+            pop.className = 'score-pop';
+            pop.textContent = `+${points}`;
+            pop.style.left = '50%';
+            pop.style.top = '50%';
+            document.body.appendChild(pop);
+            setTimeout(() => pop.remove(), 1000);
+        }
+
+        // ------------------------------------------------------------
+        //                     تحديث الواجهة
+        // ------------------------------------------------------------
         function renderBoard() {
             let level = levels[currentLevel];
             let boardDiv = document.getElementById('board');
-            document.getElementById('levelNumber').innerText = `المستوى ${level.id} / 20`;
-            document.getElementById('target').innerText = level.target;
-            document.getElementById('score').innerText = score;
-            document.getElementById('arrowCount').innerText = boosters.arrow;
-            document.getElementById('bombCount').innerText = boosters.bomb;
 
-            boardDiv.style.gridTemplateColumns = `repeat(${level.cols}, 65px)`;
+            // تحديث المعلومات
+            document.getElementById('levelDisplay').textContent = `المستوى ${level.id}`;
+            document.getElementById('scoreDisplay').textContent = score;
+            document.getElementById('targetDisplay').textContent = level.target;
+            document.getElementById('movesDisplay').textContent = moves;
+            document.getElementById('arrowCount').textContent = boosters.arrow;
+            document.getElementById('bombCount').textContent = boosters.bomb;
+
+            // تحديث أزرار التنقل
+            document.getElementById('prevBtn').classList.toggle('disabled', currentLevel === 0);
+            document.getElementById('nextBtn').classList.toggle('disabled', 
+                currentLevel === levels.length-1 || !completedLevels.includes(currentLevel));
+
+            // ضبط شكل الشبكة
+            boardDiv.style.gridTemplateColumns = `repeat(${level.cols}, 70px)`;
             boardDiv.innerHTML = '';
 
+            // رسم الخلايا
             for (let r = 0; r < level.rows; r++) {
                 for (let c = 0; c < level.cols; c++) {
                     let cell = document.createElement('div');
                     cell.className = 'cell';
+
+                    // شكل المثلث
                     if (level.shape === 'triangle' && c > r) {
                         cell.classList.add('obstacle');
                     } else {
+                        // صخور
                         if (level.obstacles.some(o => o.row === r && o.col === c)) {
                             cell.classList.add('obstacle');
                         } else {
-                            cell.textContent = board[r][c];
-                            if (level.ice.some(i => i.row === r && i.col === c)) cell.classList.add('ice');
+                            let num = board[r][c];
+                            cell.textContent = num;
+                            cell.classList.add(`num-${num}`);
+                            
+                            // جليد
+                            if (level.ice.some(i => i.row === r && i.col === c)) {
+                                cell.classList.add('ice');
+                            }
                         }
                     }
-                    if (selectedRow === r && selectedCol === c) cell.classList.add('selected');
+
+                    if (selectedRow === r && selectedCol === c) {
+                        cell.classList.add('selected');
+                    }
+
+                    // أحداث السحب
                     cell.setAttribute('draggable', 'true');
-                    cell.ondragstart = (e) => { e.dataTransfer.setData('text/plain', ''); handleDragStart(r, c); };
+                    cell.ondragstart = (e) => {
+                        e.dataTransfer.setData('text/plain', '');
+                        handleDragStart(r, c);
+                    };
                     cell.ondragover = (e) => e.preventDefault();
-                    cell.ondrop = (e) => { e.preventDefault(); handleDrop(r, c); };
+                    cell.ondrop = (e) => {
+                        e.preventDefault();
+                        handleDrop(r, c);
+                    };
+
                     boardDiv.appendChild(cell);
                 }
             }
-            startHintTimer();
+
+            updateStars();
         }
 
-        function selectBooster(type) {
-            if (boosters[type] > 0) {
-                selectedBooster = selectedBooster === type ? null : type;
-                renderBoard();
+        // ------------------------------------------------------------
+        //                     التنقل بين المراحل
+        // ------------------------------------------------------------
+        function nextLevel() {
+            if (currentLevel < levels.length - 1 && completedLevels.includes(currentLevel)) {
+                currentLevel++;
+                resetLevel();
+            } else {
+                showMessage('❌ لم تحل هذا المستوى بعد!');
             }
         }
 
-        function nextLevel() {
-            if (currentLevel < levels.length-1) currentLevel++;
-            resetLevel();
-        }
         function prevLevel() {
-            if (currentLevel > 0) currentLevel--;
-            resetLevel();
+            if (currentLevel > 0) {
+                currentLevel--;
+                resetLevel();
+            }
         }
+
         function resetLevel() {
             let level = levels[currentLevel];
             updateNumbersPool(level);
             board = createRandomBoard(level.rows, level.cols);
             score = 0;
+            moves = 0;
             selectedRow = -1;
-            selectedBooster = null;
-            boosters = { arrow: level.id <= 3 ? 3 : level.id <=5 ? 1 : 0, bomb: level.id <= 3 ? 2 : level.id <=5 ? 1 : 0 };
+            gameActive = true;
+            boosters = { 
+                arrow: level.id <= 3 ? 3 : level.id <= 5 ? 2 : 1,
+                bomb: level.id <= 3 ? 2 : level.id <= 5 ? 1 : 0
+            };
             renderBoard();
         }
 
+        // ------------------------------------------------------------
+        //                     بدء اللعبة
+        // ------------------------------------------------------------
         resetLevel();
     </script>
 </body>
